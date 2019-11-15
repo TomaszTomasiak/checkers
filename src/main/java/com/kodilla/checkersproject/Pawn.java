@@ -1,12 +1,36 @@
 package com.kodilla.checkersproject;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public interface Pawn {
+public class Pawn extends Circle{
+    private int i;
+    private int j;
+    private Circle circle;
+    private Color color;
 
-    public String color();
+    public Pawn(int i, int j, Color color) {
+        this.circle = new Circle(45, color);
+        circle.setCenterY(i+45);
+        circle.setCenterX(j+45);
+        this.i = i;
+        this.j = j;
+        this.color = color;
+    }
 
-    Circle circle(int i, int j);
+    public Pawn() {
+
+    }
+
+    public Circle getCircle() {
+        return circle;
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public Pawn getPawn(){
+        return this;
+    }
 }
-
-

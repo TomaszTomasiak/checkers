@@ -5,28 +5,43 @@ import javafx.scene.shape.Rectangle;
 
 public class Field {
 
-    public int x;
-    public int y;
-    public int width = 90;
-    public int height = 90;
+    private int x;
+    private int y;
+    private int width = 90;
+    private int height = 90;
+    private Pawn pawn;
+    private Rectangle rectangle;
 
-    public Rectangle rectangle(int i, int j) {
+    private Rectangle rectangle(int i, int j) {
 
         x = width * i;
         y = height * j;
 
-       Rectangle r = new Rectangle(x, y , width, height);
-        r.setFill(Color.TRANSPARENT);
+        Rectangle r = new Rectangle(x, y, width, height);
+        r.setFill(Color.YELLOW);
         r.setY(x);
         r.setY(y);
         return r;
     }
-    public Field(){
-    }
+
 
     public Field(int i, int j) {
-        x = width + i;
-        y = height + j;
+        this.rectangle = rectangle(i, j);
+        this.pawn = pawn;
+        this.x = width + i;
+        this.y = height + j;
+    }
+
+    public Pawn getPawn() {
+        return pawn;
+    }
+
+    public Rectangle getRectangle() {
+        return rectangle;
+    }
+
+    public void setPawn(Pawn pawn) {
+        this.pawn = pawn;
     }
 }
 
