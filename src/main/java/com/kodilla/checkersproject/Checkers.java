@@ -89,6 +89,7 @@ public class Checkers extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
 
+
         // Add mouse event handlers for the source
         sourcePawn.setOnDragDetected(new EventHandler<MouseEvent>() {
             public void handle(MouseEvent event) {
@@ -113,8 +114,9 @@ public class Checkers extends Application {
                 dragDropped(event);
             }
         });
-        private void dragDetected (MouseEvent event)
-        {
+
+    }
+        private void dragDetected (MouseEvent event) {
             // User can drag only when there is text in the source field
             Pawn thePawn = sourcePawn.getPawn();
 
@@ -122,67 +124,62 @@ public class Checkers extends Application {
                 event.consume();
                 return;
             }
+
+            // Initiate a drag-and-drop gesture
+            Dragboard dragboard = sourcePawn.startDragAndDrop(TransferMode.COPY_OR_MOVE);
+
+            // Add the source text to the Dragboard
+            ClipboardContent content = new ClipboardContent();
+            content.put(PAWN, sourcePawn);
+            dragboard.setContent(content);
+            event.consume();
         }
-        // Initiate a drag-and-drop gesture
-        Dragboard dragboard = sourcePawn.startDragAndDrop(TransferMode.COPY_OR_MOVE);
 
-        // Add the source text to the Dragboard
-        ClipboardContent content = new ClipboardContent();
-        content.put(PAWN,sourcePawn);
-        dragboard.setContent(content);
-        event.consume();
-    }
-
-    private void dragOver(DragEvent event)
-    {
-        // If drag board has a string, let the event know that
-        // the target accepts copy and move transfer modes
-        Dragboard dragboard = event.getDragboard();
-
-        if (dragboard.hasString())
+        private void dragOver (DragEvent event)
         {
-            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            // If drag board has a string, let the event know that
+            // the target accepts copy and move transfer modes
+            Dragboard dragboard = event.getDragboard();
+
+            if (dragboard.hasString()) {
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+
+            event.consume();
         }
 
-        event.consume();
-    }
-
-    private void dragDropped(DragEvent event)
-    {
-        // Transfer the data to the target
-        Dragboard dragboard = event.getDragboard();
-
-        if (theField.isEmpty())
+        private void dragDropped (DragEvent event)
         {
-            theField.add(targetPawn);
+            // Transfer the data to the target
+            Dragboard dragboard = event.getDragboard();
 
-            // Data transfer is successful
-            event.setDropCompleted(true);
+            if (theField.isEmpty()) {
+                theField.add(targetPawn);
+
+                // Data transfer is successful
+                event.setDropCompleted(true);
+            } else {
+                // Data transfer is not successful
+                event.setDropCompleted(false);
+            }
+
+            event.consume();
         }
-        else
+
+        private void dragDone (DragEvent event)
         {
-            // Data transfer is not successful
-            event.setDropCompleted(false);
+            // Check how data was transfered to the target. If it was moved, clear the text in the source.
+            TransferMode modeUsed = event.getTransferMode();
+
+            if (modeUsed == TransferMode.MOVE) {
+                // usuń pionek z pola
+                theField.remove(sourcePawn);
+
+            }
+
+            event.consume();
         }
 
-        event.consume();
-    }
-
-    private void dragDone(DragEvent event)
-    {
-        // Check how data was transfered to the target. If it was moved, clear the text in the source.
-        TransferMode modeUsed = event.getTransferMode();
-
-        if (modeUsed == TransferMode.MOVE)
-        {
-            // usuń pionek z pola
-            theField.remove(sourcePawn);
-
-        }
-
-        event.consume();
-    }
-
 
     }
-}
+
