@@ -18,7 +18,7 @@ public class Field {
         y = height * j;
 
         Rectangle r = new Rectangle(x, y, width, height);
-        r.setFill(Color.YELLOW);
+        r.setFill(Color.TRANSPARENT);
         r.setY(x);
         r.setY(y);
         return r;

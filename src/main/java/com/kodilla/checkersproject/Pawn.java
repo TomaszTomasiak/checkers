@@ -9,6 +9,7 @@ public class Pawn extends Circle{
     private Circle circle;
     private Color color;
 
+
     public Pawn(int i, int j, Color color) {
         this.circle = new Circle(45, color);
         circle.setCenterY(i+45);
@@ -33,4 +34,5 @@ public class Pawn extends Circle{
     public Pawn getPawn(){
         return this;
     }
+
 }

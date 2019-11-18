@@ -1,6 +1,6 @@
 package com.kodilla.checkersproject;
 
-import com.sun.javafx.geom.Rectangle;
+
 import javafx.scene.paint.Color;
 import javafx.scene.input.MouseEvent;
 
@@ -8,18 +8,35 @@ import java.util.ArrayList;
 
 public class CheckersController {
 
+    ArrayList<Pawn> redsList = new ArrayList<>();
+    ArrayList<Pawn> bluesList = new ArrayList<>();
+
+    Boolean redPlayerTurn;
+    Boolean bluePlayerTurn;
+
+
+
     Pawn pawn;
     Field field;
     MouseEvent e;
 
 
+
     public void tmpName() {
-        if (pawn.getColor().equals(Color.RED)) {
+
+        while (true) {
+            System.out.println("Reds start");
 
 
-        } else {
+            if (pawn.getColor().equals(Color.RED)) {
 
+
+            } else {
+
+            }
         }
     }
+
+
 
 }

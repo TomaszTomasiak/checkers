@@ -1,0 +1,330 @@
+package com.kodilla.checkersproject;
+
+import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.geometry.Orientation;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
+import javafx.scene.Scene;
+import javafx.scene.control.ListView;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
+import javafx.scene.input.MouseEvent;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+public class Checkers extends Application {
+
+    ArrayList<Pawn> theField;
+    ArrayList<Pawn> redsList = new ArrayList<>();
+    ArrayList<Pawn> bluesList = new ArrayList<>();
+
+    ListView<Circle> sourceView = new ListView<>();
+    ListView<Circle> targetView = new ListView<>();
+
+    Optional<Pawn> fieldWithPawn;
+
+    Circle sourcePawn = new Circle();
+    Circle targetPawn = new Circle();
+
+    Boolean redPlayerTurn;
+    Boolean bluePlayerTurn;
+
+    private Image board = new Image("file:src/main/resources/checkersboard.png");
+    private FlowPane chekersBoard = new FlowPane(Orientation.HORIZONTAL);
+
+    static final DataFormat PAWN = new DataFormat("Pawn");
+
+    public static void main(String[] args) {
+
+        launch(args);
+
+    }
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+
+        GridPane gridBoard = new GridPane();
+        gridBoard.setAlignment(Pos.TOP_LEFT);
+
+        ImageView img = new ImageView(board);
+        img.setImage(board);
+
+        chekersBoard.getChildren().add(img);
+
+        gridBoard.add(chekersBoard, 0, 0, 8, 8);
+
+        Group root = new Group();
+
+        Field[][] fields = new Field[8][8];
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                Field objField = new Field(i, j);
+
+
+                if ((i + j) % 2 == 0) {
+
+                    gridBoard.add(objField.getRectangle(), i, j);
+                    theField = new ArrayList<>();
+                    fields[i][j] = new Field(i, j);
+
+                }
+
+                if ((i < 8 && j < 3) && ((i + j) % 2 == 0)) {
+
+                    Pawn pawn = new Pawn(i, j, Color.BLUE);
+                    objField.setPawn(pawn);
+                    gridBoard.add(pawn.getCircle(), i, j);
+                    theField.add(pawn);
+                    bluesList.add(pawn);
+                    sourceView.getItems().add(pawn);
+                }
+
+                if ((i < 8 && j >= 5) && ((i + j) % 2 == 0)) {
+                    Pawn pawn = new Pawn(i, j, Color.RED);
+                    objField.setPawn(pawn);
+                    gridBoard.add(pawn.getCircle(), i, j);
+                    theField.add(pawn);
+                    redsList.add(pawn);
+                    sourceView.getItems().add(pawn);
+                }
+            }
+        }
+
+        Scene scene = new Scene(gridBoard, 1000, 720, Color.DARKGREEN);
+
+        primaryStage.setTitle("Checkers");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+
+
+        // Add mouse event handlers for the source
+        sourceView.setOnDragDetected(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                dragDetected(event, sourceView);
+            }
+        });
+        /*
+        sourcePawn.setOnDragDetected(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                System.out.println("Pawn detected");
+                dragDetected(event);
+            }
+        });
+
+         */
+        sourceView.setOnDragDropped(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                System.out.println("Event on Source: drag dropped");
+                dragDropped(event, sourceView);
+            }
+        });
+/*
+        sourcePawn.setOnDragDone(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                System.out.println("Pawn draged");
+                dragDone(event);
+            }
+        });
+
+ */
+
+        // Add mouse event handlers for the target
+
+        targetView.setOnDragDetected(new EventHandler<MouseEvent>() {
+            public void handle(MouseEvent event) {
+                System.out.println("Event on Target: drag detected");
+                dragDetected(event, targetView);
+            }
+        });
+/*
+        targetPawn.setOnDragOver(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                System.out.println("Pawn can be draged here");
+                dragOver(event);
+            }
+        });
+
+ */
+
+        targetView.setOnDragOver(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                System.out.println("Event on Target: drag over");
+                dragOver(event, targetView);
+            }
+        });
+
+        targetView.setOnDragDropped(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                System.out.println("Event on Target: drag dropped");
+                dragDropped(event, targetView);
+            }
+        });
+
+
+        /*
+
+        targetPawn.setOnDragDropped(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                System.out.println("Pawn dropped");
+                dragDropped(event);
+            }
+        });
+
+         */
+        targetView.setOnDragDone(new EventHandler<DragEvent>() {
+            public void handle(DragEvent event) {
+                System.out.println("Event on Target: drag done");
+                dragDone(event, targetView);
+            }
+        });
+
+    }
+
+
+    private void dragDetected(MouseEvent event, ListView<Circle> listView) {
+        // Make sure at least one item is selected
+        int selectedCount = listView.getSelectionModel().getSelectedIndices().size();
+
+        if (selectedCount == 0) {
+            event.consume();
+            return;
+        }
+    }
+
+    /*
+private void dragDetected(MouseEvent event) {
+    // User can drag only when there is object in the source field
+    Circle thePawn = theField.get(0);
+
+    if (thePawn == null) {
+        event.consume();
+        return;
+    }
+
+    // Initiate a drag-and-drop gesture
+    Dragboard dragboard = sourcePawn.startDragAndDrop(TransferMode.COPY_OR_MOVE);
+
+    // Add the source object to the Dragboard
+    ClipboardContent content = new ClipboardContent();
+    content.put(PAWN, sourcePawn);
+    dragboard.setContent(content);
+    event.consume();
+}
+
+     */
+    private void dragOver(DragEvent event, ListView<Circle> listView) {
+        // If drag board has an ITEM_LIST and it is not being dragged
+        // over itself, we accept the MOVE transfer mode
+        Dragboard dragboard = event.getDragboard();
+
+        if (event.getGestureSource() != listView && dragboard.hasContent(PAWN)) {
+            event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+        }
+
+        event.consume();
+    }
+
+    /*
+        private void dragOver(DragEvent event) {
+            // If drag board has the Object, let the event know that
+            // the target accepts copy and move transfer modes
+            Dragboard dragboard = event.getDragboard();
+
+            if (dragboard.hasString()) {
+                event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
+            }
+
+            event.consume();
+        }
+
+     */
+    private void dragDropped(DragEvent event, ListView<Circle> listView) {
+        boolean dragCompleted = false;
+
+        // Transfer the data to the target
+        Dragboard dragboard = event.getDragboard();
+
+        if (dragboard.hasContent(PAWN)) {
+            ArrayList<Circle> list = (ArrayList<Circle>) dragboard.getContent(PAWN);
+            listView.getItems().addAll(list);
+            // Data transfer is successful
+            dragCompleted = true;
+        }
+
+        // Data transfer is not successful
+        event.setDropCompleted(dragCompleted);
+        event.consume();
+    }
+
+    /*
+        private void dragDropped(DragEvent event) {
+            // Transfer the data to the target
+            Dragboard dragboard = event.getDragboard();
+
+            if (theField.isEmpty()) {
+                theField.add(targetPawn);
+
+                // Data transfer is successful
+                event.setDropCompleted(true);
+            } else {
+                // Data transfer is not successful
+                event.setDropCompleted(false);
+            }
+
+            event.consume();
+        }
+
+     */
+    private void dragDone(DragEvent event, ListView<Circle> listView) {
+        // Check how data was transfered to the target
+        // If it was moved, clear the selected items
+        TransferMode tm = event.getTransferMode();
+
+        if (tm == TransferMode.MOVE) {
+            removePawnFromSourcePosition(listView);
+
+        }
+
+        event.consume();
+    }
+/*
+    private void dragDone(DragEvent event) {
+        // Check how data was transfered to the target. If it was moved, clear the object in the source.
+        TransferMode modeUsed = event.getTransferMode();
+
+        if (modeUsed == TransferMode.MOVE) {
+            theField.remove(sourcePawn);
+
+        }
+
+        event.consume();
+    }
+
+ */
+private void removePawnFromSourcePosition(ListView<Circle> listView)
+{
+    // Get all selected Fruits in a separate list to avoid the shared liPawnst issue
+    List<Circle> selectedPawn = new ArrayList<>();
+
+    for(Circle pawn : listView.getSelectionModel().getSelectedItems())
+    {
+        selectedPawn.add(pawn);
+    }
+
+    // Clear the selection
+    listView.getSelectionModel().clearSelection();
+    // Remove items from the selected list
+    listView.getItems().removeAll(selectedPawn);
+}
+
+}
+
