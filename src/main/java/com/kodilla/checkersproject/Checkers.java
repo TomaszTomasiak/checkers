@@ -68,11 +68,11 @@ public class Checkers extends Application {
                     Pawn pawn = new Pawn(i, j, Color.BLUE);
                     objField.setPawn(pawn);
                     gridBoard.add(pawn.getCircle(), i, j);
-                    //theField.add(pawn);
-                    //bluesList.add(pawn);
-                    pawn.setCursor(Cursor.HAND);
-                    pawn.setOnMousePressed(pawnOnMousePressedEventHandler);
-                    pawn.setOnMouseDragged(pawnOnMouseDraggedEventHandler);
+                    theField.add(pawn);
+                    bluesList.add(pawn);
+                    pawn.getCircle().setCursor(Cursor.HAND);
+                    pawn.getCircle().setOnMousePressed(pawnOnMousePressedEventHandler);
+                    pawn.getCircle().setOnMouseDragged(pawnOnMouseDraggedEventHandler);
                 }
 
                 if ((i < 8 && j >= 5) && ((i + j) % 2 == 0)) {
@@ -81,9 +81,9 @@ public class Checkers extends Application {
                     gridBoard.add(pawn.getCircle(), i, j);
                     theField.add(pawn);
                     redsList.add(pawn);
-                    pawn.setCursor(Cursor.HAND);
-                    pawn.setOnMousePressed(pawnOnMousePressedEventHandler);
-                    pawn.setOnMouseDragged(pawnOnMouseDraggedEventHandler);
+                    pawn.getCircle().setCursor(Cursor.HAND);
+                    pawn.getCircle().setOnMousePressed(pawnOnMousePressedEventHandler);
+                    pawn.getCircle().setOnMouseDragged(pawnOnMouseDraggedEventHandler);
                 }
             }
         }
@@ -104,8 +104,8 @@ public class Checkers extends Application {
                 public void handle(MouseEvent t) {
                     orgSceneX = t.getSceneX();
                     orgSceneY = t.getSceneY();
-                    orgTranslateX = ((Pawn) (t.getSource())).getTranslateX();
-                    orgTranslateY = ((Pawn) (t.getSource())).getTranslateY();
+                    orgTranslateX = ((Circle) (t.getSource())).getTranslateX();
+                    orgTranslateY = ((Circle) (t.getSource())).getTranslateY();
                 }
             };
 
@@ -119,8 +119,8 @@ public class Checkers extends Application {
                     double newTranslateX = orgTranslateX + offsetX;
                     double newTranslateY = orgTranslateY + offsetY;
 
-                    ((Pawn) (t.getSource())).setTranslateX(newTranslateX);
-                    ((Pawn) (t.getSource())).setTranslateY(newTranslateY);
+                    ((Circle) (t.getSource())).setTranslateX(newTranslateX);
+                    ((Circle) (t.getSource())).setTranslateY(newTranslateY);
                 }
             };
 }
