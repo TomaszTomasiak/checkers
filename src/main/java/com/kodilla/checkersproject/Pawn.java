@@ -19,9 +19,6 @@ public class Pawn extends Circle{
         this.color = color;
     }
 
-    public Pawn() {
-
-    }
 
     public Circle getCircle() {
         return circle;

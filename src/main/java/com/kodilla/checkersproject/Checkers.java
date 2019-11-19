@@ -16,10 +16,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
 import javafx.scene.input.MouseEvent;
-
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class Checkers extends Application {
 
@@ -27,24 +24,12 @@ public class Checkers extends Application {
     ArrayList<Pawn> redsList = new ArrayList<>();
     ArrayList<Pawn> bluesList = new ArrayList<>();
 
-    ListView<Circle> sourceView = new ListView<>();
-    ListView<Circle> targetView = new ListView<>();
-
-    Optional<Pawn> fieldWithPawn;
-
-    Circle sourcePawn = new Circle();
-    Circle targetPawn = new Circle();
-
-    Boolean redPlayerTurn;
-    Boolean bluePlayerTurn;
-
     double orgSceneX, orgSceneY;
     double orgTranslateX, orgTranslateY;
 
     private Image board = new Image("file:src/main/resources/checkersboard.png");
     private FlowPane chekersBoard = new FlowPane(Orientation.HORIZONTAL);
 
-    static final DataFormat PAWN = new DataFormat("Pawn");
 
     public static void main(String[] args) {
 
@@ -68,40 +53,37 @@ public class Checkers extends Application {
         Group root = new Group();
 
         Field[][] fields = new Field[8][8];
-        Pawn pawn = new Pawn();
+
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 Field objField = new Field(i, j);
 
-                    gridBoard.add(objField.getRectangle(), i, j);
-                    theField = new ArrayList<>();
-                    fields[i][j] = new Field(i, j);
-
+                gridBoard.add(objField.getRectangle(), i, j);
+                theField = new ArrayList<>();
+                fields[i][j] = new Field(i, j);
 
 
                 if ((i < 8 && j < 3) && ((i + j) % 2 == 0)) {
-
-                    Circle bluePawn = new Circle(45, Color.BLUE);
+                    Pawn pawn = new Pawn(i, j, Color.BLUE);
                     objField.setPawn(pawn);
-                    gridBoard.add(pawn, i, j);
-                    theField.add(pawn);
-                    bluesList.add(pawn);
-                    //sourceView.getItems().add(pawn);
-                    bluePawn.setCursor(Cursor.HAND);
-                    bluePawn.setOnMousePressed(circleOnMousePressedEventHandler);
-                    bluePawn.setOnMouseDragged(circleOnMouseDraggedEventHandler);
+                    gridBoard.add(pawn.getCircle(), i, j);
+                    //theField.add(pawn);
+                    //bluesList.add(pawn);
+                    pawn.setCursor(Cursor.HAND);
+                    pawn.setOnMousePressed(pawnOnMousePressedEventHandler);
+                    pawn.setOnMouseDragged(pawnOnMouseDraggedEventHandler);
                 }
 
                 if ((i < 8 && j >= 5) && ((i + j) % 2 == 0)) {
-                    Circle redPawn = new Circle(45, Color.RED);
+                    Pawn pawn = new Pawn(i, j, Color.RED);
                     objField.setPawn(pawn);
-                    gridBoard.add(pawn, i, j);
+                    gridBoard.add(pawn.getCircle(), i, j);
                     theField.add(pawn);
                     redsList.add(pawn);
-                    redPawn.setCursor(Cursor.HAND);
-                    redPawn.setOnMousePressed(circleOnMousePressedEventHandler);
-                    redPawn.setOnMouseDragged(circleOnMouseDraggedEventHandler);
+                    pawn.setCursor(Cursor.HAND);
+                    pawn.setOnMousePressed(pawnOnMousePressedEventHandler);
+                    pawn.setOnMouseDragged(pawnOnMouseDraggedEventHandler);
                 }
             }
         }
@@ -115,19 +97,19 @@ public class Checkers extends Application {
     }
 
 
-    EventHandler<MouseEvent> circleOnMousePressedEventHandler =
+    EventHandler<MouseEvent> pawnOnMousePressedEventHandler =
             new EventHandler<MouseEvent>() {
 
                 @Override
                 public void handle(MouseEvent t) {
                     orgSceneX = t.getSceneX();
                     orgSceneY = t.getSceneY();
-                    orgTranslateX = ((Circle)(t.getSource())).getTranslateX();
-                    orgTranslateY = ((Circle)(t.getSource())).getTranslateY();
+                    orgTranslateX = ((Pawn) (t.getSource())).getTranslateX();
+                    orgTranslateY = ((Pawn) (t.getSource())).getTranslateY();
                 }
             };
 
-    EventHandler<MouseEvent> circleOnMouseDraggedEventHandler =
+    EventHandler<MouseEvent> pawnOnMouseDraggedEventHandler =
             new EventHandler<MouseEvent>() {
 
                 @Override
@@ -137,8 +119,8 @@ public class Checkers extends Application {
                     double newTranslateX = orgTranslateX + offsetX;
                     double newTranslateY = orgTranslateY + offsetY;
 
-                    ((Circle)(t.getSource())).setTranslateX(newTranslateX);
-                    ((Circle)(t.getSource())).setTranslateY(newTranslateY);
+                    ((Pawn) (t.getSource())).setTranslateX(newTranslateX);
+                    ((Pawn) (t.getSource())).setTranslateY(newTranslateY);
                 }
             };
 }
