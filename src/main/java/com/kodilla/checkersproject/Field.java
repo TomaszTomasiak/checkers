@@ -1,5 +1,6 @@
 package com.kodilla.checkersproject;
 
+import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
@@ -18,12 +19,23 @@ public class Field {
         y = height * j;
 
         Rectangle r = new Rectangle(x, y, width, height);
-        r.setFill(Color.TRANSPARENT);
+        r.setFill(Color.LIGHTYELLOW);
         r.setY(x);
         r.setY(y);
         return r;
     }
 
+    @Override
+    public String toString() {
+        return "Field{" +
+                "x=" + x +
+                ", y=" + y +
+                ", width=" + width +
+                ", height=" + height +
+                ", pawn=" + pawn +
+                ", rectangle=" + rectangle +
+                '}';
+    }
 
     public Field(int i, int j) {
         this.rectangle = rectangle(i, j);
