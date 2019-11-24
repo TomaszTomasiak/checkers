@@ -1,65 +1,70 @@
 package com.kodilla.checkersproject;
 
+import javafx.scene.Cursor;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-public class Pawn extends Circle{
-    private int i;
-    private int j;
-    private Circle circle;
-    private Color color;
+import static com.kodilla.checkersproject.Checkers.FIELD_SIZE;
 
+public class Pawn extends StackPane {
 
-    public Pawn(int i, int j, Color color) {
-        this.circle = new Circle(45, color);
-        circle.setCenterY((j*90)+45);
-        circle.setCenterX((i*90)+45);
-        this.i = i;
-        this.j = j;
-        this.color = color;
+    private PawnTeam team;
+
+    private double mouseX, mouseY;
+    private double oldX, oldY;
+
+    public double getOldX() {
+        return oldX;
     }
 
-
-    public Circle getCircle() {
-        return circle;
+    public double getOldY() {
+        return oldY;
     }
 
-    public Color getColor() {
-        return color;
+    public PawnTeam getTeam() {
+        return team;
     }
 
-    public Pawn getPawn(){
-        return this;
+    public Pawn(PawnTeam team, int x, int y) {
+        this.team = team;
+
+        move(x, y);
+
+        Circle pieceShape = new Circle(FIELD_SIZE * 0.40);
+        pieceShape.setFill(team == PawnTeam.RED ? Color.RED : Color.BLUE);
+
+        pieceShape.setTranslateX((FIELD_SIZE - ((FIELD_SIZE * 0.40) * 2)) / 2);
+        pieceShape.setTranslateY((FIELD_SIZE - ((FIELD_SIZE * 0.40) * 2)) / 2);
+
+        getChildren().addAll(pieceShape);
+
+
+        setOnMousePressed(e -> {
+
+            mouseX = e.getSceneX();
+            mouseY = e.getSceneY();
+            toFront();
+
+        });
+
+        setOnMouseDragged(e -> {
+
+            relocate(e.getSceneX() - mouseX + oldX, e.getSceneY() - mouseY + oldY);
+            toFront();
+            setCursor(Cursor.HAND);
+
+
+        });
     }
 
-    @Override
-    public String toString() {
-        return "Pawn{" +
-                "i=" + i +
-                ", j=" + j +
-                ", circle=" + circle +
-                ", color=" + color +
-                '}';
+    public void move(int x, int y) {
+        oldX = x * FIELD_SIZE;
+        oldY = y * FIELD_SIZE;
+        relocate(oldX, oldY);
+    }
+
+    public void abortMove() {
+        relocate(oldX, oldY);
     }
 }
-/*
-public final int x;
-	public final int y;
-
-	// C'tor
-	public Point(int x, int y) {
-		this.x = x;
-		this.y = y;
-	}
-
-	@Override
-	public String toString() {
-		return "{ \"x\": " + x + ", \"y\": " + y + " }";
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		// If the object is also a point, and the x and y are the same, it is equal.
-		return obj instanceof Point && ((Point)obj).x == this.x && ((Point)obj).y == this.y;
-	}
- */

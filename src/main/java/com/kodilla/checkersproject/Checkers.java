@@ -1,96 +1,68 @@
 package com.kodilla.checkersproject;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Orientation;
-import javafx.geometry.Pos;
-import javafx.scene.Cursor;
 import javafx.scene.Group;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.*;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.stage.Stage;
-import javafx.scene.input.MouseEvent;
 
 
 public class Checkers extends Application {
 
-    double orgSceneX, orgSceneY;
-    double orgTranslateX, orgTranslateY;
+    public static final int FIELD_SIZE = 90;
+    public static final int WIDTH = 8;
+    public static final int HEIGHT = 8;
 
-    Circle selectedPawn;
-    Circle posibleTargetPosition;
-    Circle targetPosition;
+    private Group fieldGroup = new Group();
+    private Group pawnGroup = new Group();
 
-    private Image board = new Image("file:src/main/resources/checkersboard.png");
+    private PawnTeam turn;
+
+    private Field[][] fields = new Field[WIDTH][HEIGHT];
+
+    private Image image = new Image("file:src/main/resources/checkersboard.png");
     private FlowPane chekersBoard = new FlowPane(Orientation.HORIZONTAL);
-// tablica dwuwymiarowa przechowująca współrzędne pionków
 
-    private static int pawnsTab[][] = new int[8][8];
-    ;
+    private Parent createContent() {
+        Pane root = new Pane();
+        root.setPrefSize(WIDTH * FIELD_SIZE, HEIGHT * FIELD_SIZE);
+        root.getChildren().addAll(fieldGroup, pawnGroup);
 
-    public static void main(String[] args) {
+        for (int y = 0; y < HEIGHT; y++) {
+            for (int x = 0; x < WIDTH; x++) {
+                Field field = new Field((x + y) % 2 == 0, x, y);
+                fields[x][y] = field;
+                fieldGroup.getChildren().add(field);
 
-        launch(args);
+                Pawn pawn = null;
 
+                if (y <= 2 && (x + y) % 2 != 0) {
+                    pawn = pawnCreator(PawnTeam.BLUE, x, y);
+
+                }
+                if (y >= 5 && (x + y) % 2 != 0) {
+                    pawn = pawnCreator(PawnTeam.RED, x, y);
+
+                }
+                if (pawn != null) {
+                    field.setPawn(pawn);
+                    pawnGroup.getChildren().add(pawn);
+                }
+            }
+        }
+
+        return root;
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        GridPane gridBoard = new GridPane();
-        gridBoard.setAlignment(Pos.TOP_LEFT);
-
-        ImageView img = new ImageView(board);
-        img.setImage(board);
-
-        chekersBoard.getChildren().add(img);
-
-        gridBoard.add(chekersBoard, 0, 0, 8, 8);
-
-        Group root = new Group();
-
-        Field[][] fields = new Field[8][8];
-
-
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                Field objField = new Field(i, j);
-
-                if ((i + j) % 2 == 0) {
-                    gridBoard.add(objField.getRectangle(), i, j);
-                    fields[i][j] = new Field(i, j);
-                    pawnsTab[i][j] = 0;
-                    objField.getRectangle().setOnMouseClicked(pawnOnTheFiledPressedEventHandler);
-                }
-
-                if ((i < 8 && j < 3) && ((i + j) % 2 == 0)) {
-                    Pawn pawn = new Pawn(i, j, Color.BLUE);
-                    objField.setPawn(pawn);
-                    gridBoard.add(pawn.getCircle(), i, j);
-                    pawnsTab[i][j] = 2;
-                    pawn.getCircle().setCursor(Cursor.HAND);
-                    pawn.getCircle().setOnMouseClicked(pawnOnMousePressedEventHandler);
-                    pawn.getCircle().setOnMouseReleased(pawnOnTargetEventHandler);
-
-                }
-
-                if ((i < 8 && j >= 5) && ((i + j) % 2 == 0)) {
-                    Pawn pawn = new Pawn(i, j, Color.RED);
-                    objField.setPawn(pawn);
-                    gridBoard.add(pawn.getCircle(), i, j);
-                    pawnsTab[i][j] = 1;
-                    pawn.getCircle().setCursor(Cursor.HAND);
-                    pawn.getCircle().setOnMouseClicked(pawnOnMousePressedEventHandler);
-                }
-            }
-        }
-
-
-        Scene scene = new Scene(gridBoard, 1000, 720, Color.DARKGREEN);
+        Scene scene = new Scene(createContent(), 1000, 720, Color.DARKGREEN);
 
         primaryStage.setTitle("Checkers");
         primaryStage.setScene(scene);
@@ -98,91 +70,79 @@ public class Checkers extends Application {
 
     }
 
+    private MoveResult tryMove(Pawn pawn, int newX, int newY) {
+        if (fields[newX][newY].hasPawn() || (newX + newY) % 2 == 0) {
+            return new MoveResult(MoveType.NONE);
+        }
+        int x0 = toBoard(pawn.getOldX());
+        int y0 = toBoard(pawn.getOldY());
 
-    EventHandler<MouseEvent> pawnOnMousePressedEventHandler =
-            new EventHandler<MouseEvent>() {
+        if (Math.abs(newX - x0) == 1 && newY - y0 == pawn.getTeam().teamMove) {
 
-                @Override
-                public void handle(MouseEvent t) {
+            return new MoveResult(MoveType.NORMAL);
 
-                    selectedPawn = (Circle) (t.getSource());
-                    selectedPawn.toFront();
+        } else if (Math.abs(newX - x0) == 2 && newY - y0 == pawn.getTeam().teamMove * 2) {
+            int x1 = x0 + (newX - x0) / 2;
+            int y1 = y0 + (newY - y0) / 2;
 
-                    orgSceneX = t.getSceneX();
-                    orgSceneY = t.getSceneY();
+            if (fields[x1][y1].hasPawn() && fields[x1][y1].getPawn().getTeam() != pawn.getTeam()) {
+                return new MoveResult(MoveType.KILL, fields[x1][y1].getPawn());
+            }
+        }
+        return new MoveResult(MoveType.NONE);
 
+    }
 
-                    int x;
-                    int y;
-                    x = (int) orgSceneX;
-                    y = (int) orgSceneY;
+    private int toBoard(double pixel) {
+        return (int) (pixel + FIELD_SIZE / 2) / FIELD_SIZE;
+    }
 
+    public Pawn pawnCreator(PawnTeam type, int x, int y) {
+        Pawn pawn = new Pawn(type, x, y);
 
-                    double posX = selectedPawn.getCenterX() - 90.0;
-                    double posY = selectedPawn.getCenterY() - 90.0;
+        pawn.setOnMouseReleased(e -> {
+            int newX = toBoard(pawn.getLayoutX());
+            int newY = toBoard(pawn.getLayoutY());
 
-
-                    targetPosition.setCenterX(posX);
-                    targetPosition.setCenterY(posY);
-                    targetPosition.setFill(Color.GREY);
-
-
-                    selectedPawn.setFill(Color.VIOLET);
-
-
-                    System.out.println(selectedPawn);
-                    System.out.println("x: " + x);
-                    System.out.println("y: " + y);
-
-
-                }
-            };
-/*
-    EventHandler<MouseEvent> pawnOnMouseDraggedEventHandler =
-            new EventHandler<MouseEvent>() {
-
-                @Override
-                public void handle(MouseEvent t) {
-                    double offsetX = t.getSceneX() - orgSceneX;
-                    double offsetY = t.getSceneY() - orgSceneY;
-                    double newTranslateX = orgTranslateX + offsetX;
-                    double newTranslateY = orgTranslateY + offsetY;
-
-                    ((Circle) (t.getSource())).setTranslateX(newTranslateX);
-                    ((Circle) (t.getSource())).setTranslateY(newTranslateY);
-
-                    System.out.println("offsetX : " + offsetX);
-                    System.out.println("offsetY: " + offsetY);
+            MoveResult result = tryMove(pawn, newX, newY);
 
 
-                }
-            };
-
- */
+            int x0 = toBoard(pawn.getOldX());
+            int y0 = toBoard(pawn.getOldY());
 
 
-    EventHandler<MouseEvent> pawnOnTheFiledPressedEventHandler =
-            new EventHandler<MouseEvent>() {
 
-                @Override
-                public void handle(MouseEvent t) {
+            switch (result.getMoveType()) {
+                case NONE:
+                    pawn.abortMove();
+                    break;
+
+                case NORMAL:
+                    pawn.move(newX, newY);
+                    fields[x0][y0].setPawn(null);
+                    fields[newX][newY].setPawn(pawn);
+
+                    break;
+
+                case KILL:
+                    pawn.move(newX, newY);
+                    fields[x0][y0].setPawn(null);
+                    fields[newX][newY].setPawn(pawn);
+
+                    Pawn competitorPiece = result.getPawn();
+                    fields[toBoard(competitorPiece.getOldX())][toBoard(competitorPiece.getOldY())].setPawn(null);
+                    pawnGroup.getChildren().remove(competitorPiece);
 
 
-                }
-            };
+                    break;
+            }
+        });
 
-    EventHandler<MouseEvent> pawnOnTargetEventHandler =
-            new EventHandler<MouseEvent>() {
+        return pawn;
+    }
 
-                @Override
-                public void handle(MouseEvent t) {
-
-
-                }
-            };
-
-    public void posibleTargetField() {
-
+    public static void main(String[] args) {
+        launch(args);
     }
 }
 
