@@ -1,6 +1,5 @@
 package com.kodilla.checkersproject;
 
-import javafx.scene.Cursor;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -11,8 +10,21 @@ public class Pawn extends StackPane {
 
     private PawnTeam team;
 
+    private PawnTeam nextPlayer = PawnTeam.RED;
+
+    private boolean isRedTurn = true;
+
+
     private double mouseX, mouseY;
     private double oldX, oldY;
+
+    public double getMouseX() {
+        return mouseX;
+    }
+
+    public double getMouseY() {
+        return mouseY;
+    }
 
     public double getOldX() {
         return oldX;
@@ -31,31 +43,17 @@ public class Pawn extends StackPane {
 
         move(x, y);
 
-        Circle pieceShape = new Circle(FIELD_SIZE * 0.40);
-        pieceShape.setFill(team == PawnTeam.RED ? Color.RED : Color.BLUE);
+        Circle pawnShape = new Circle(FIELD_SIZE * 0.40);
+        pawnShape.setFill(team == PawnTeam.RED ? Color.RED : Color.BLUE);
 
-        pieceShape.setTranslateX((FIELD_SIZE - ((FIELD_SIZE * 0.40) * 2)) / 2);
-        pieceShape.setTranslateY((FIELD_SIZE - ((FIELD_SIZE * 0.40) * 2)) / 2);
+        pawnShape.setTranslateX((FIELD_SIZE - ((FIELD_SIZE * 0.40) * 2)) / 2);
+        pawnShape.setTranslateY((FIELD_SIZE - ((FIELD_SIZE * 0.40) * 2)) / 2);
 
-        getChildren().addAll(pieceShape);
-
-
-        setOnMousePressed(e -> {
-
-            mouseX = e.getSceneX();
-            mouseY = e.getSceneY();
-            toFront();
-
-        });
-
-        setOnMouseDragged(e -> {
-
-            relocate(e.getSceneX() - mouseX + oldX, e.getSceneY() - mouseY + oldY);
-            toFront();
-            setCursor(Cursor.HAND);
+        getChildren().addAll(pawnShape);
 
 
-        });
+
+
     }
 
     public void move(int x, int y) {
@@ -67,4 +65,8 @@ public class Pawn extends StackPane {
     public void abortMove() {
         relocate(oldX, oldY);
     }
+
+
 }
+
+
