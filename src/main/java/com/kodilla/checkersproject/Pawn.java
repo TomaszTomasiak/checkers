@@ -18,6 +18,14 @@ public class Pawn extends StackPane {
     private double mouseX, mouseY;
     private double oldX, oldY;
 
+    public void setMouseX(double mouseX) {
+        this.mouseX = mouseX;
+    }
+
+    public void setMouseY(double mouseY) {
+        this.mouseY = mouseY;
+    }
+
     public double getMouseX() {
         return mouseX;
     }
@@ -50,9 +58,6 @@ public class Pawn extends StackPane {
         pawnShape.setTranslateY((FIELD_SIZE - ((FIELD_SIZE * 0.40) * 2)) / 2);
 
         getChildren().addAll(pawnShape);
-
-
-
 
     }
 

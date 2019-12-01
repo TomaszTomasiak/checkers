@@ -5,7 +5,7 @@ public enum PawnTeam {
 
     final int teamMove;
 
-    PawnTeam(int teamMove){
-    this.teamMove = teamMove;
+    PawnTeam(int teamMove) {
+        this.teamMove = teamMove;
     }
 }

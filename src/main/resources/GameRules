@@ -1,0 +1,17 @@
+
+--------- WARCABY -----------
+
+Gra rozgrywana jest na jasnych polach planszy o rozmiarach 8 x 8 pól.
+Każdy gracz rozpoczyna grę z dwunastoma pionkami swojego koloru:
+
+pierwszy gra czerwonymi - RED
+drugi gra niebieskimi - BLUE
+
+Pionki można przesuwać tylko do przodu i tylko o jedno pole.
+
+Bicie pionka przeciwnika możliwe jest gdy pionek przeciwnika znajduje się na polu przylegającym do pionka który ma prawo ruchu oraz następne pole za pionkiem
+przeciwnika jest puste. Wówczas pionek który ma prawo ruchu stawiamy na pustym polu za pionkiem przeciwnika, a pionek przeciwnika zdejmujemy z planszy.
+
+Grę zaczynają pionki czerwone. Po ustawieniu pionka na wybranym polu, następuje zmiana gracza.
+Gdy gracz ustawi swój pionek na którymkolwiek polu ostatniej lini plansza - wygrywa grę.
+Grę można zakończyć w dowolnum momencie, naciskając przycisk "Finish the game" , wówczas wygrywa gracz z większą liczbą pionków na planszy.
