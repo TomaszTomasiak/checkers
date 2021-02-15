@@ -23,20 +23,20 @@ public class Checkers extends Application {
 
     private PawnTeam nextPlayer = PawnTeam.RED;
 
-    private Group fieldGroup = new Group();
-    private Group pawnGroup = new Group();
-    private Group buttons = new Group();
-    private Group labels = new Group();
+    private final Group fieldGroup = new Group();
+    private final Group pawnGroup = new Group();
+    private final Group buttons = new Group();
+    private final Group labels = new Group();
 
     private List<Pawn> redPawnList = new ArrayList<Pawn>();
     private List<Pawn> bluePawnList = new ArrayList<Pawn>();
 
-    private Field[][] fields = new Field[WIDTH][HEIGHT];
+    private final Field[][] fields = new Field[WIDTH][HEIGHT];
 
-    private Label turnStatus = new Label();
-    private Label theWinner = new Label();
-    private Label redStatus = new Label();
-    private Label blueStatus = new Label();
+    private final Label turnStatus = new Label();
+    private final Label theWinner = new Label();
+    private final Label redStatus = new Label();
+    private final Label blueStatus = new Label();
 
 
     private Parent createContent() {
